@@ -37,7 +37,7 @@ namespace MonkeWatcher
 
                 if (ShowHide)
                 {
-                    GUI.Box(new Rect(20, 50, 170, 150), "KFC'S Spectator Client, F6 to Hide.");
+                    GUI.Box(new Rect(20, 50, 170, 150), "KFC'S Spectator Client");
 
 
                     if (GUI.Button(new Rect(25, 80, 160f, 30f), string1))
@@ -121,6 +121,7 @@ namespace MonkeWatcher
     {
 
         static GameObject camParent = new GameObject("CameraParentForShot");
+        
         static CinemachineVirtualCamera cb = FindObjectOfType<CinemachineVirtualCamera>();
 
        
@@ -129,6 +130,7 @@ namespace MonkeWatcher
             if (!FreeCam)
             {
                 FreeCam = true;
+                 
                 camParent.transform.position = PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>()[Current - 1].head.rigTarget.position;
                 camParent.transform.rotation = PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>()[Current - 1].head.rigTarget.rotation;
                 cb.Follow = camParent.transform;
@@ -367,6 +369,7 @@ namespace MonkeWatcher
             }
             else
             {
+                camParent.transform.position = GorillaLocomotion.Player.Instance.headCollider.transform.position;
                 cb.Follow = GorillaLocomotion.Player.Instance.headCollider.transform;
             }
 
