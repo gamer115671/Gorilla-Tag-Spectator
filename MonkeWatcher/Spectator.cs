@@ -3,6 +3,8 @@ using BepInEx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
+using Photon.Realtime;
+using Photon.Voice.PUN;
 using UnityEngine.XR;
 using System.Collections;
 using Cinemachine;
@@ -29,6 +31,8 @@ namespace MonkeWatcher
         {
             if (ShowGui)
             {
+
+                
 
                 if (GUI.Button(new Rect(20, 20, 160, 20), "SPECTATOR"))
                 {
@@ -74,14 +78,69 @@ namespace MonkeWatcher
 
                     if (PhotonNetwork.InRoom)
                     {
-                        GUI.Box(new Rect(20, 200, 170, 30), "Current Room: " + PhotonNetwork.CurrentRoom.Name);
+                        GUI.Box(new Rect(20, 200, 170, 100), "Current Room: " + PhotonNetwork.CurrentRoom.Name);
                     }
                     else
                     {
-                        GUI.Box(new Rect(20, 200, 170, 30), "Currently Not in a room");
+                        GUI.Box(new Rect(20, 200, 170, 100), "Currently Not in a room");
                     }
 
-                   
+                    if (GUI.Button(new Rect(20, 240, 160, 20), string3))
+                    {
+                        muted = !muted;
+                        foreach (VRRig player in PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>())
+                        {
+
+                            
+                            if (player.GetComponent<Player>() != PhotonNetwork.LocalPlayer && player != null)
+                            {
+                                player.GetComponent<PhotonVoiceView>().SpeakerInUse.gameObject.GetComponent<AudioSource>().enabled = (!muted);
+                                if (!muted)
+                                {
+                                    player.GetComponent<PhotonVoiceView>().SpeakerInUse.RestartPlayback();
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    if (muted)
+                    {
+                        string3 = "Mute ALL OTHERS <color=green>ON</color>";
+
+                    }
+                    else
+                    {
+                        string3 = "Mute ALL OTHERS <color=red>OFF</color>";
+
+                    }
+
+
+                    if (GUI.Button(new Rect(20, 270, 160, 20), string4))
+                    {
+                        muteSelf = !muteSelf;
+
+                        PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !muteSelf;
+                      
+
+                    }
+
+                    if (muteSelf)
+                    {
+                        string4 = "Mute SELF <color=green>ON</color>";
+
+                    }
+                    else
+                    {
+                        string4 = "Mute SELF <color=red>OFF</color>";
+
+                    }
+
+
+
+
+
 
 
 
@@ -92,12 +151,18 @@ namespace MonkeWatcher
 
         }
         public static bool Spectate;
+        public static bool ShowHide2 = false;
         public static string string1;
         public static string string2;
+        public static string string3;
         public static bool ShowHide = false;
         public static string roomCode = "CAM";
         public static bool ShowGui = true;
         public static bool PlayerMover = false;
+        public static bool muted = false;
+        public static bool muteSelf = false;
+        public static string string4;
+        
     }
 
     [HarmonyPatch(typeof(PhotonNetworkController))]
