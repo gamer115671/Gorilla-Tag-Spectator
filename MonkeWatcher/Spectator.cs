@@ -41,111 +41,141 @@ namespace MonkeWatcher
 
                 if (ShowHide)
                 {
-                    GUI.Box(new Rect(20, 50, 170, 150), "KFC'S Spectator Client");
-
-
-                    if (GUI.Button(new Rect(25, 80, 160f, 30f), string1))
+                    if (PhotonNetwork.CurrentRoom != null)
                     {
-                        Spectate = !Spectate;
-                    }
-                    if (Spectate)
-                    {
-                        string1 = "Spectator <color=green>ON</color>";
-
-                    }
-                    else
-                    {
-                        string1 = "Spectator <color=red>OFF</color>";
-
-                    }
-                    roomCode = GUI.TextArea(new Rect(20, 120, 160, 20), roomCode, 200);
-
-                    if (GUI.Button(new Rect(25, 150, 160f, 30f), "Join Room"))
-                    {
-                        PhotonNetworkController __instance = PhotonNetworkController.instance;
-                        if (PhotonNetwork.InRoom)
+                        if (PhotonNetwork.CurrentRoom.IsVisible)
                         {
-                            PhotonNetwork.LeaveRoom();
+                            Spectate = false;
+                            GUI.Box(new Rect(20, 50, 170, 170), "KFC'S Spectator Client");
+                            GUI.Label(new Rect(50, 90, 170, 20), "IN A PUBLIC");
+                            roomCode = GUI.TextArea(new Rect(20, 120, 160, 20), roomCode, 200);
+
+                            if (GUI.Button(new Rect(25, 150, 160f, 30f), "Join Room"))
+                            {
+                                PhotonNetworkController __instance = PhotonNetworkController.instance;
+                                if (PhotonNetwork.InRoom)
+                                {
+                                    PhotonNetwork.LeaveRoom();
+                                }
+
+                                __instance.currentGameType = "privatetag";
+                                __instance.customRoomID = roomCode;
+                                __instance.isPrivate = true;
+                                __instance.attemptingToConnect = true;
+                                __instance.AttemptToConnectToRoom();
+
+                            }
+
+                            GUI.Label(new Rect(20, 190, 170, 20), "Current Room: " + PhotonNetwork.CurrentRoom.Name);
+                            return;
+                        }
+                    }
+                    
+                        GUI.Box(new Rect(20, 50, 170, 150), "KFC'S Spectator Client");
+
+
+                        if (GUI.Button(new Rect(25, 80, 160f, 30f), string1))
+                        {
+                            Spectate = !Spectate;
+                        }
+                        if (Spectate)
+                        {
+                            string1 = "Spectator <color=green>ON</color>";
+
+                        }
+                        else
+                        {
+                            string1 = "Spectator <color=red>OFF</color>";
+
+                        }
+                        roomCode = GUI.TextArea(new Rect(20, 120, 160, 20), roomCode, 200);
+
+                        if (GUI.Button(new Rect(25, 150, 160f, 30f), "Join Room"))
+                        {
+                            PhotonNetworkController __instance = PhotonNetworkController.instance;
+                            if (PhotonNetwork.InRoom)
+                            {
+                                PhotonNetwork.LeaveRoom();
+                            }
+
+                            __instance.currentGameType = "privatetag";
+                            __instance.customRoomID = roomCode;
+                            __instance.isPrivate = true;
+                            __instance.attemptingToConnect = true;
+                            __instance.AttemptToConnectToRoom();
+
                         }
 
-                        __instance.currentGameType = "privatetag";
-                        __instance.customRoomID = roomCode;
-                        __instance.isPrivate = true;
-                        __instance.attemptingToConnect = true;
-                        __instance.AttemptToConnectToRoom();
-
-                    }
-
-                    if (PhotonNetwork.InRoom)
-                    {
-                        GUI.Box(new Rect(20, 200, 170, 100), "Current Room: " + PhotonNetwork.CurrentRoom.Name);
-                    }
-                    else
-                    {
-                        GUI.Box(new Rect(20, 200, 170, 100), "Currently Not in a room");
-                    }
-
-                    if (GUI.Button(new Rect(20, 240, 160, 20), string3))
-                    {
-                        muted = !muted;
-                        foreach (VRRig player in PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>())
+                        if (PhotonNetwork.InRoom)
                         {
+                            GUI.Box(new Rect(20, 200, 170, 230), "Current Room: " + PhotonNetwork.CurrentRoom.Name);
+                        }
+                        else
+                        {
+                            GUI.Box(new Rect(20, 200, 170, 230), "Currently Not in a room");
+                        }
 
-                            
-                            if (player.GetComponent<Player>() != PhotonNetwork.LocalPlayer && player != null)
+                        if (GUI.Button(new Rect(20, 240, 160, 20), string3))
+                        {
+                            muted = !muted;
+                            foreach (VRRig player in PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>())
                             {
-                                player.GetComponent<PhotonVoiceView>().SpeakerInUse.gameObject.GetComponent<AudioSource>().enabled = (!muted);
-                                if (!muted)
+
+
+                                if (player.GetComponent<Player>() != PhotonNetwork.LocalPlayer && player != null)
                                 {
-                                    player.GetComponent<PhotonVoiceView>().SpeakerInUse.RestartPlayback();
+                                    player.GetComponent<PhotonVoiceView>().SpeakerInUse.gameObject.GetComponent<AudioSource>().enabled = (!muted);
+                                    if (!muted)
+                                    {
+                                        player.GetComponent<PhotonVoiceView>().SpeakerInUse.RestartPlayback();
+                                    }
                                 }
+
                             }
 
                         }
 
-                    }
+                        if (muted)
+                        {
+                            string3 = "Mute ALL OTHERS <color=green>ON</color>";
 
-                    if (muted)
-                    {
-                        string3 = "Mute ALL OTHERS <color=green>ON</color>";
+                        }
+                        else
+                        {
+                            string3 = "Mute ALL OTHERS <color=red>OFF</color>";
 
-                    }
-                    else
-                    {
-                        string3 = "Mute ALL OTHERS <color=red>OFF</color>";
-
-                    }
+                        }
 
 
-                    if (GUI.Button(new Rect(20, 270, 160, 20), string4))
-                    {
-                        muteSelf = !muteSelf;
+                        if (GUI.Button(new Rect(20, 270, 160, 20), string4))
+                        {
+                            muteSelf = !muteSelf;
 
-                        PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !muteSelf;
-                      
-
-                    }
-
-                    if (muteSelf)
-                    {
-                        string4 = "Mute SELF <color=green>ON</color>";
-
-                    }
-                    else
-                    {
-                        string4 = "Mute SELF <color=red>OFF</color>";
-
-                    }
+                            PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !muteSelf;
 
 
+                        }
 
+                        if (muteSelf)
+                        {
+                            string4 = "Mute SELF <color=green>ON</color>";
 
+                        }
+                        else
+                        {
+                            string4 = "Mute SELF <color=red>OFF</color>";
 
+                        }
+
+                        GUI.Label(new Rect(25, 300, 160, 20), "SensX");
+                        sensX = GUI.HorizontalSlider(new Rect(25, 330, 160, 30), sensX, 0.0F, 1.0F);
+                        GUI.Label(new Rect(25, 370, 160, 20), "SensX");
+                        sensY = GUI.HorizontalSlider(new Rect(25, 400, 160, 30), sensY, 0.0F, 1.0F);
 
 
 
 
-
+                    
                 }
             }
 
@@ -156,29 +186,19 @@ namespace MonkeWatcher
         public static string string2;
         public static string string3;
         public static bool ShowHide = false;
-        public static string roomCode = "CAM";
+        public static string roomCode = "";
         public static bool ShowGui = true;
         public static bool PlayerMover = false;
         public static bool muted = false;
         public static bool muteSelf = false;
         public static string string4;
-        
+
+        public static float sensX = 0.3f;
+        public static float sensY = 0.3f;
+
     }
 
-    [HarmonyPatch(typeof(PhotonNetworkController))]
-    [HarmonyPatch("OnConnectedToMaster", MethodType.Normal)]
-    class Join : BaseUnityPlugin
-    {
-        static void Prefix(PhotonNetworkController __instance)
-        {
-            __instance.currentGameType = "privatetag";
-            __instance.customRoomID = MyPatcher.roomCode;
-            __instance.isPrivate = true;
-            __instance.attemptingToConnect = true;
-            __instance.AttemptToConnectToRoom();
-        }
-        
-    }
+
 
         [HarmonyPatch(typeof(GorillaTagger))]
     [HarmonyPatch("LateUpdate", MethodType.Normal)]
@@ -206,8 +226,10 @@ namespace MonkeWatcher
 
             if (MyPatcher.Spectate)
             {
+                sensX = MyPatcher.sensX;
+                sensY = MyPatcher.sensY;
 
-              
+
                 __instance.thirdPersonCamera.transform.SetParent(camParent.transform);
 
                 float x = 0;
