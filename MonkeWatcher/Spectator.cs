@@ -12,6 +12,9 @@ using HarmonyLib;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Timers;
+
+using Photon.Voice.Unity;
+
 namespace MonkeWatcher
 {
     [BepInPlugin("org.bepinex.plugins.SpectatorCam", "Spectator Camera", "1.0.0.0")]
@@ -157,6 +160,7 @@ namespace MonkeWatcher
                         muteSelf = !muteSelf;
 
                         PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !muteSelf;
+                        PhotonNetworkController.instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
 
 
                     }
@@ -228,6 +232,20 @@ namespace MonkeWatcher
         }
         static void Prefix(GorillaTagger __instance)
         {
+
+            if (MyPatcher.muteSelf)
+            {
+                GorillaComputer.instance.pttType = "PUSH TO TALK";
+                PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !MyPatcher.muteSelf;
+                PhotonNetworkController.instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
+                Debug.Log("Muted I think " + MyPatcher.muteSelf);
+                Debug.Log("Muted I think 2 " + !MyPatcher.muteSelf);
+
+            }
+            else
+            {
+                GorillaComputer.instance.pttType = PlayerPrefs.GetString("pttType", "ALL CHAT");
+            }
 
             if (MyPatcher.Spectate)
             {
