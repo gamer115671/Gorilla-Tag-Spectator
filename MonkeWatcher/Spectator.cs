@@ -66,11 +66,7 @@ namespace MonkeWatcher
                                     PhotonNetwork.LeaveRoom();
                                 }
 
-                                __instance.currentGameType = "privatetag";
-                                __instance.customRoomID = roomCode;
-                                __instance.isPrivate = true;
-                                __instance.attemptingToConnect = true;
-                                __instance.AttemptToConnectToRoom();
+                                __instance.AttemptToJoinSpecificRoom(roomCode);
 
                             }
 
@@ -106,27 +102,23 @@ namespace MonkeWatcher
                             PhotonNetwork.LeaveRoom();
                         }
 
-                        __instance.currentGameType = "privatetag";
-                        __instance.customRoomID = roomCode;
-                        __instance.isPrivate = true;
-                        __instance.attemptingToConnect = true;
-                        __instance.AttemptToConnectToRoom();
+                        __instance.AttemptToJoinSpecificRoom(roomCode);
 
                     }
 
                     if (PhotonNetwork.InRoom)
                     {
-                        GUI.Box(new Rect(20, 200, 170, 230), "Current Room: " + PhotonNetwork.CurrentRoom.Name);
+                        GUI.Box(new Rect(20, 200, 170, 270), "Current Room: " + PhotonNetwork.CurrentRoom.Name);
                     }
                     else
                     {
-                        GUI.Box(new Rect(20, 200, 170, 230), "Currently Not in a room");
+                        GUI.Box(new Rect(20, 200, 170, 270), "Currently Not in a room");
                     }
 
                     if (GUI.Button(new Rect(20, 240, 160, 20), string3))
                     {
                         muted = !muted;
-                        foreach (VRRig player in PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>())
+                        foreach (VRRig player in GorillaParent.instance.GetComponentsInChildren<VRRig>())
                         {
 
 
@@ -178,11 +170,23 @@ namespace MonkeWatcher
 
                     GUI.Label(new Rect(25, 300, 160, 20), "SensX");
                     sensX = GUI.HorizontalSlider(new Rect(25, 330, 160, 30), sensX, 0.0F, 1.0F);
-                    GUI.Label(new Rect(25, 370, 160, 20), "SensX");
+                    GUI.Label(new Rect(25, 370, 160, 20), "SensY");
                     sensY = GUI.HorizontalSlider(new Rect(25, 400, 160, 30), sensY, 0.0F, 1.0F);
 
 
+                    if (GUI.Button(new Rect(20, 430, 160, 20), "Load Maps"))
+                    {
+                       GameObject Canyon = GameObject.Find("NetworkTriggers/Geo Trigger/EnteringCanyonGeo");
+                       GameObject Cave = GameObject.Find("NetworkTriggers/Geo Trigger/EnteringCaveGeo");
+                       GameObject Forest = GameObject.Find("NetworkTriggers/Geo Trigger/LeavingCosmetics");
 
+                        Canyon.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+                        Forest.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+                        Cave.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+                        Forest.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+
+
+                    }
 
 
                 }
@@ -225,14 +229,14 @@ namespace MonkeWatcher
             {
                 FreeCam = true;
 
-                camParent.transform.position = PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>()[Current - 1].head.rigTarget.position;
-                camParent.transform.rotation = PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>()[Current - 1].head.rigTarget.rotation;
+                camParent.transform.position = GorillaParent.instance.GetComponentsInChildren<VRRig>()[Current - 1].head.rigTarget.position;
+                camParent.transform.rotation = GorillaParent.instance.GetComponentsInChildren<VRRig>()[Current - 1].head.rigTarget.rotation;
                 cb.Follow = camParent.transform;
             }
         }
         static void Prefix(GorillaTagger __instance)
         {
-
+            
             if (MyPatcher.muteSelf)
             {
                 GorillaComputer.instance.pttType = "PUSH TO TALK";
@@ -468,11 +472,11 @@ namespace MonkeWatcher
                     // Debug.Log(PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>().Length);
                     if (MyPatcher.Spectate && FreeCam == false)
                     {
-                        if (Current > PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>().Length)
+                        if (Current > GorillaParent.instance.GetComponentsInChildren<VRRig>().Length)
                         {
-                            Current = PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>().Length;
+                            Current = GorillaParent.instance.GetComponentsInChildren<VRRig>().Length;
                         }
-                        cb.Follow = PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>()[Current - 1].head.rigTarget;
+                        cb.Follow = GorillaParent.instance.GetComponentsInChildren<VRRig>()[Current - 1].head.rigTarget;
 
                     }
                 }
@@ -506,24 +510,24 @@ namespace MonkeWatcher
     }
 
     [HarmonyPatch(typeof(PhotonNetworkController))]
-    [HarmonyPatch("OnJoinedRoom", MethodType.Normal)]
+    [HarmonyPatch("FixedUpdate", MethodType.Normal)]
     class AntiAFK : MonoBehaviour
     {
 
-        static void Prefix(PhotonNetworkController __instance)
+        public static void Prefix(PhotonNetworkController __instance)
         {
-            if (!PhotonNetwork.CurrentRoom.IsVisible)
-            {
-                __instance.disconnectTime = 99999f;
-                Debug.Log("Set Time");
-                Debug.Log(__instance.disconnectTime);
-            }
-            else
-            {
-                __instance.disconnectTime = 120f;
-            }
+            
+                
+                    return;
+                
+            
+            
         }
 
     }
 
-    }
+
+   
+
+
+}
