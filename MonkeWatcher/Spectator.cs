@@ -510,18 +510,15 @@ namespace MonkeWatcher
     }
 
     [HarmonyPatch(typeof(PhotonNetworkController))]
-    [HarmonyPatch("FixedUpdate", MethodType.Normal)]
+    [HarmonyPatch("Awake", MethodType.Normal)]
     class AntiAFK : MonoBehaviour
     {
 
         public static void Prefix(PhotonNetworkController __instance)
         {
-            
-                
-                    return;
-                
-            
-            
+
+            __instance.disableAFKKick = true;
+
         }
 
     }
