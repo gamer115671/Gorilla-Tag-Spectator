@@ -24,7 +24,7 @@ namespace MonkeWatcher
 
     public class MyPatcher : BaseUnityPlugin
     {
-        
+
 
         public void Awake()
         {
@@ -60,7 +60,7 @@ namespace MonkeWatcher
 
                             if (GUI.Button(new Rect(25, 150, 160f, 30f), "Join Room"))
                             {
-                                PhotonNetworkController __instance = PhotonNetworkController.instance;
+                                GorillaNetworking.PhotonNetworkController __instance = GorillaNetworking.PhotonNetworkController.instance;
                                 if (PhotonNetwork.InRoom)
                                 {
                                     PhotonNetwork.LeaveRoom();
@@ -96,7 +96,7 @@ namespace MonkeWatcher
 
                     if (GUI.Button(new Rect(25, 150, 160f, 30f), "Join Room"))
                     {
-                        PhotonNetworkController __instance = PhotonNetworkController.instance;
+                        GorillaNetworking.PhotonNetworkController __instance = GorillaNetworking.PhotonNetworkController.instance;
                         if (PhotonNetwork.InRoom)
                         {
                             PhotonNetwork.LeaveRoom();
@@ -152,7 +152,7 @@ namespace MonkeWatcher
                         muteSelf = !muteSelf;
 
                         PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !muteSelf;
-                        PhotonNetworkController.instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
+                        GorillaNetworking.PhotonNetworkController.instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
 
 
                     }
@@ -176,14 +176,25 @@ namespace MonkeWatcher
 
                     if (GUI.Button(new Rect(20, 430, 160, 20), "Load Maps"))
                     {
-                       GameObject Canyon = GameObject.Find("NetworkTriggers/Geo Trigger/EnteringCanyonGeo");
-                       GameObject Cave = GameObject.Find("NetworkTriggers/Geo Trigger/EnteringCaveGeo");
-                       GameObject Forest = GameObject.Find("NetworkTriggers/Geo Trigger/LeavingCosmetics");
 
-                        Canyon.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
-                        Forest.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
-                        Cave.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
-                        Forest.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+                        GameObject Forest = GameObject.Find("Forest");
+
+                        GameObject Trigger3 = GameObject.Find("EnteringCosmeticsGeo");
+                        GameObject Trigger4 = GameObject.Find("EnteringBackAreaGeo");
+                        GameObject Trigger5 = GameObject.Find("EnteringCanyonGeo");
+                        GameObject Trigger6 = GameObject.Find("EnteringCaveGeo");
+
+                        selectorArr = new GameObject[2];
+                        selectorArr[0] = Forest;
+
+                        Trigger6.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+                        GameObject Cave = GameObject.Find("Cave");
+                        selectorArr[1] = Cave;
+                        Trigger3.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+                        Trigger4.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+                        Trigger5.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
+                        Trigger6.GetComponent<GorillaGeoHideShowTrigger>().makeSureThisIsEnabled = selectorArr;
+                        Trigger6.GetComponent<GorillaGeoHideShowTrigger>().OnBoxTriggered();
 
 
                     }
@@ -208,7 +219,7 @@ namespace MonkeWatcher
 
         public static float sensX = 0.3f;
         public static float sensY = 0.3f;
-
+        public GameObject[] selectorArr;
     }
 
 
@@ -236,19 +247,19 @@ namespace MonkeWatcher
         }
         static void Prefix(GorillaTagger __instance)
         {
-            
+
             if (MyPatcher.muteSelf)
             {
-                GorillaComputer.instance.pttType = "PUSH TO TALK";
+                GorillaNetworking.GorillaComputer.instance.pttType = "PUSH TO TALK";
                 PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !MyPatcher.muteSelf;
-                PhotonNetworkController.instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
+                GorillaNetworking.PhotonNetworkController.instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
                 Debug.Log("Muted I think " + MyPatcher.muteSelf);
                 Debug.Log("Muted I think 2 " + !MyPatcher.muteSelf);
 
             }
             else
             {
-                GorillaComputer.instance.pttType = PlayerPrefs.GetString("pttType", "ALL CHAT");
+                GorillaNetworking.GorillaComputer.instance.pttType = PlayerPrefs.GetString("pttType", "ALL CHAT");
             }
 
             if (MyPatcher.Spectate)
@@ -507,14 +518,15 @@ namespace MonkeWatcher
         public static Gamepad gamepad;
 
 
+
     }
 
-    [HarmonyPatch(typeof(PhotonNetworkController))]
+    [HarmonyPatch(typeof(GorillaNetworking.PhotonNetworkController))]
     [HarmonyPatch("Awake", MethodType.Normal)]
     class AntiAFK : MonoBehaviour
     {
 
-        public static void Prefix(PhotonNetworkController __instance)
+        public static void Prefix(GorillaNetworking.PhotonNetworkController __instance)
         {
 
             __instance.disableAFKKick = true;
@@ -524,7 +536,7 @@ namespace MonkeWatcher
     }
 
 
-   
+
 
 
 }
