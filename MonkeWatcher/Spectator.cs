@@ -60,7 +60,7 @@ namespace MonkeWatcher
 
                             if (GUI.Button(new Rect(25, 150, 160f, 30f), "Join Room"))
                             {
-                                GorillaNetworking.PhotonNetworkController __instance = GorillaNetworking.PhotonNetworkController.instance;
+                                GorillaNetworking.PhotonNetworkController __instance = GorillaNetworking.PhotonNetworkController.Instance;
                                 if (PhotonNetwork.InRoom)
                                 {
                                     PhotonNetwork.LeaveRoom();
@@ -96,7 +96,7 @@ namespace MonkeWatcher
 
                     if (GUI.Button(new Rect(25, 150, 160f, 30f), "Join Room"))
                     {
-                        GorillaNetworking.PhotonNetworkController __instance = GorillaNetworking.PhotonNetworkController.instance;
+                        GorillaNetworking.PhotonNetworkController __instance = GorillaNetworking.PhotonNetworkController.Instance;
                         if (PhotonNetwork.InRoom)
                         {
                             PhotonNetwork.LeaveRoom();
@@ -152,7 +152,7 @@ namespace MonkeWatcher
                         muteSelf = !muteSelf;
 
                         PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !muteSelf;
-                        GorillaNetworking.PhotonNetworkController.instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
+                        GorillaNetworking.PhotonNetworkController.Instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
 
 
                     }
@@ -252,7 +252,7 @@ namespace MonkeWatcher
             {
                 GorillaNetworking.GorillaComputer.instance.pttType = "PUSH TO TALK";
                 PhotonVoiceNetwork.Instance.PrimaryRecorder.TransmitEnabled = !MyPatcher.muteSelf;
-                GorillaNetworking.PhotonNetworkController.instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
+                GorillaNetworking.PhotonNetworkController.Instance.GetComponent<Recorder>().TransmitEnabled = !MyPatcher.muteSelf;
                 Debug.Log("Muted I think " + MyPatcher.muteSelf);
                 Debug.Log("Muted I think 2 " + !MyPatcher.muteSelf);
 
@@ -480,7 +480,7 @@ namespace MonkeWatcher
                 }
                 else
                 {
-                    // Debug.Log(PhotonNetworkController.instance.currentGorillaParent.GetComponentsInChildren<VRRig>().Length);
+                    // Debug.Log(PhotonNetworkController.Instance.currentGorillaParent.GetComponentsInChildren<VRRig>().Length);
                     if (MyPatcher.Spectate && FreeCam == false)
                     {
                         if (Current > GorillaParent.instance.GetComponentsInChildren<VRRig>().Length)
